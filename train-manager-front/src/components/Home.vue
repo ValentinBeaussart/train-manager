@@ -24,7 +24,7 @@ export default {
           key: 'departure_time'
         },
         {
-          key: 'platform'
+          key: 'station_platform'
         },
         {
           key: 'ajouter'

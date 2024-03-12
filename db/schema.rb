@@ -20,7 +20,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_234716) do
   end
 
   create_table "trains", force: :cascade do |t|
-    t.string "platform"
+    t.string "station_platform"
     t.datetime "arrival_time"
     t.datetime "departure_time"
     t.integer "destination_id", null: false
