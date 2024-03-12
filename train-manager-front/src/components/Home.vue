@@ -1,19 +1,54 @@
 <template>
-  <div class="mt-4">
-    <b-table striped hover :items="items"></b-table>
+  <div>
+    <b-table striped hover :items="trains" :fields="fields"></b-table>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
-      items: [
-        { id: 40, destination: 'Dickerson', départ: 'Macdonald', arrivée: 'Macdonald', quai: 'B' },
-        { id: 40, destination: 'Dickerson', départ: 'Macdonald', arrivée: 'Macdonald', quai: 'B' },
-        { id: 40, destination: 'Dickerson', départ: 'Macdonald', arrivée: 'Macdonald', quai: 'B' },
-        { id: 40, destination: 'Dickerson', départ: 'Macdonald', arrivée: 'Macdonald', quai: 'B' }
-      ]
+      fields: [
+        {
+          key: 'id'
+        },
+        {
+          key: 'destination'
+        },
+        {
+          key: 'arrival_time'
+        },
+        {
+          key: 'departure_time'
+        },
+        {
+          key: 'platform'
+        },
+        {
+          key: 'ajouter'
+        },
+        {
+          key: 'supprimer'
+        }
+      ],
+      trains: []
+    }
+  },
+  created () {
+    this.fetchTrains()
+  },
+  methods: {
+    fetchTrains () {
+      axios.get('http://localhost:3000/api/v1/trains')
+        .then(response => {
+          this.trains = response.data
+          console.log(this.items)
+        })
+        .catch(error => {
+          console.error('Une erreur s\'est produite lors de la récupération des trains : ', error)
+        })
     }
   }
 }
