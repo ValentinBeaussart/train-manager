@@ -30,20 +30,16 @@ export default {
           label: 'Destination'
         },
         {
-          key: 'arrival_time',
-          label: 'Arrivée'
-        },
-        {
           key: 'departure_time',
           label: 'Départ'
         },
         {
-          key: 'station_platform',
-          label: 'Quai'
+          key: 'arrival_time',
+          label: 'Arrivée'
         },
         {
-          key: 'add',
-          label: 'Ajouter'
+          key: 'station_platform',
+          label: 'Quai'
         },
         {
           key: 'delete',
