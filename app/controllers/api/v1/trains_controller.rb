@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class TrainsController < ApplicationController
+    class TrainsController < ApplicationController # rubocop:disable Style/Documentation
       # GET /trains
       def index # rubocop:disable Metrics/MethodLength
         trains = Train.includes(:destination).all.map do |train|
@@ -23,7 +23,8 @@ module Api
       def create
         @train = Train.new(train_params)
         destination = Destination.find_by(id: train_params[:destination_id])
-        assign_platform(destination.category)
+        destination_category = destination.category
+        assign_platform(destination_category)
 
         if @train.save
           render json: @train, status: :created
@@ -32,13 +33,36 @@ module Api
         end
       end
 
-      # DELETE /trains/1
-      def destroy
+      # DELETE /destinations/1
+      def destroy # rubocop:disable Metrics/MethodLength
         @train = Train.find_by(id: params[:id])
+        @train_platform = @train.station_platform
+        destination = Destination.find(@train.destination_id)
+        destination_category = destination.category
         @train.destroy
+        reassign_platform(destination_category) if @train_platform.present?
+
+        if @train.destroy
+          head :no_content
+        else
+          render json: @train.errors, status: :unprocessable_entity
+        end
       end
 
       private
+
+      def reassign_platform(destination_category)
+        compatible_trains_without_platform = Train.where(station_platform: '').all
+        compatible_trains_without_platform.each do |train|
+          destination_category = train.destination.category
+          available_platform = available_platform(destination_category)
+
+          if available_platform.present?
+            train.update(station_platform: available_platform)
+            break
+          end
+        end
+      end
 
       def train_params
         params.require(:train).permit(:station_platform, :arrival_time, :departure_time, :destination_id)
@@ -46,15 +70,16 @@ module Api
 
       def assign_platform(destination_category)
         station_platform = available_platform(destination_category)
-        @train.update(station_platform:) if station_platform
+        @train.station_platform = station_platform if station_platform.present?
+        @train.save
       end
 
-      def available_platform(category)
-        available_platforms = category == 'TER' ? %w[A B C] : %w[A B C D E]
-        last_train = Train.where(station_platform: available_platforms).order(departure_time: :desc).first
-        return unless last_train.nil? || (Time.now - last_train.departure_time) > 10.minutes
-
-        available_platforms.find { |platform| Train.where(station_platform: platform).empty? }
+      def available_platform(destination_category)
+        if destination_category == 'TER'
+          %w[A B C D E].find { |platform| Train.where(station_platform: platform).empty? }
+        else
+          %w[D E].find { |platform| Train.where(station_platform: platform).empty? }
+        end
       end
     end
   end
