@@ -6,7 +6,7 @@
       </template>
     </b-table>
     <b-button v-b-modal.modal-prevent-closing @click="openModal">Ajouter un train</b-button>
-    <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeModal"></AddTrainModal>
+    <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeModal" @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
   </div>
 </template>
 
@@ -78,6 +78,9 @@ export default {
     },
     closeModal () {
       this.showModal = false
+    },
+    trainAddedSuccessfully () {
+      this.fetchTrains()
     }
   }
 }

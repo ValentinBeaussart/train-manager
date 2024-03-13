@@ -5,7 +5,10 @@ module Api
     class TrainsController < ApplicationController # rubocop:disable Style/Documentation
       # GET /trains
       def index # rubocop:disable Metrics/MethodLength
-        trains = Train.includes(:destination).all.map do |train|
+        trains = Train.includes(:destination)
+                      .order(departure_time: :asc)
+                      .limit(10)
+                      .map do |train|
           {
             id: train.id,
             station_platform: train.station_platform,
@@ -20,8 +23,14 @@ module Api
       end
 
       # POST /trains
-      def create
+      def create # rubocop:disable Metrics/MethodLength
         @train = Train.new(train_params)
+        if @train.departure_time >= @train.arrival_time
+          render json: { error: "L'heure de départ doit être postérieure à l'heure d'arrivée" },
+                 status: :unprocessable_entity
+          return
+        end
+
         destination = Destination.find_by(id: train_params[:destination_id])
         destination_category = destination.category
         assign_platform(destination_category)
