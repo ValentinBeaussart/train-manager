@@ -2,11 +2,11 @@
   <div class="train-table-container">
     <b-table striped hover :items="trains" :fields="fields">
       <template v-slot:cell(delete)="data">
-        <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"> <b-icon
+        <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"><b-icon
             icon="trash"></b-icon></b-button>
       </template>
     </b-table>
-    <b-button class="add-train-btn" v-b-modal.modal-prevent-closing @click="openAddModal">Ajouter un train</b-button>
+    <b-button variant="secondary" class="add-train-btn" v-b-modal.modal-prevent-closing @click="openAddModal">Ajouter un train</b-button>
     <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeAddModal"
       @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
   </div>

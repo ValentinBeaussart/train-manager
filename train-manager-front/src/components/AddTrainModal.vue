@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
+    <b-modal  id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
       @ok="handleOk">
       <template v-slot:modal-header>
         <h5 class="modal-title">Ajouter un train</h5>
@@ -8,7 +8,7 @@
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group label="Destination" label-for="destination-input" invalid-feedback="Champ obligatoire"
           :state="destinationNameState">
-          <b-form-select v-model="destination_id" :options="options" required></b-form-select>
+          <b-form-select v-model="destination_id" :options="options" required @change="updateDestinationName"></b-form-select>
         </b-form-group>
         <b-form-group label="Heure de départ" label-for="departure_time-input" invalid-feedback="Champ obligatoire">
           <b-form-timepicker :state="departureTimeState" v-model="departure_time" :locale="locale"
@@ -22,6 +22,14 @@
         </b-form-group>
         <b-alert v-if="createTrainsError !== null" class="mt-4" show variant="danger">{{ createTrainsError }}</b-alert>
       </form>
+      <template #modal-footer="{ ok, cancel }">
+      <b-button size="m" variant="secondary" @click="cancel()">
+        Annuler
+      </b-button>
+      <b-button size="m" variant="danger" @click="showMsgBoxTwo()">
+        Valider
+      </b-button>
+    </template>
     </b-modal>
   </div>
 </template>
@@ -90,6 +98,36 @@ export default {
         })
         .catch(error => {
           console.error('Une erreur s\'est produite lors de la récupération des destinations : ', error)
+        })
+    },
+    updateDestinationName () {
+      const selectedOption = this.options.find(option => option.value === this.destination_id)
+      if (selectedOption) {
+        this.destination_name = selectedOption.text
+      }
+    },
+    showMsgBoxTwo () {
+      if (!this.checkFormValidity() || !this.destination_id || !this.arrival_time || !this.departure_time) {
+        return
+      }
+      this.$bvModal.msgBoxConfirm(`Êtes-vous sûr de vouloir ajouter un train à destination de ${this.destination_name} qui partira à ${this.departure_time} et arrivera à ${this.arrival_time}`, {
+        title: 'Valider votre saisie',
+        size: 'm',
+        buttonSize: 'm',
+        okVariant: 'danger',
+        okTitle: 'CONFIRMER',
+        cancelTitle: 'ANNULER',
+        footerClass: 'p-2',
+        hideHeaderClose: true,
+        centered: true
+      })
+        .then(value => {
+          if (value) {
+            this.handleSubmit()
+          }
+        })
+        .catch(err => {
+          console.log(err)
         })
     },
     checkFormValidity () {
