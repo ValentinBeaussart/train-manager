@@ -11,8 +11,13 @@
           <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"><b-icon icon="trash"></b-icon></b-button>
         </template>
       </b-table>
-      <b-button variant="secondary" class="add-train-btn" v-b-modal.modal-prevent-closing @click="openAddModal">Ajouter un train</b-button>
-      <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeAddModal" @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
+      <b-button variant="secondary" class="add-train-btn" v-b-modal.modal-prevent-closing @click="openModal('addTrain')">Ajouter un train</b-button>
+      <b-button variant="secondary" class="add-destination-btn" v-b-modal.modal-prevent-closing @click="openModal('addDestination')">Ajouter une destination</b-button>
+      <b-button variant="secondary" class="update-delete-destination-btn" v-b-modal.modal-prevent-closing @click="openModal('updateDeleteDestination')">Mettre à jour ou supprimer une destination</b-button>
+
+      <AddTrainModal ref="addTrainModal" v-if="showModal.addTrain" @close="closeModal('addTrain')" @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
+      <AddDestinationModal ref="addDestinationModal" v-if="showModal.addDestination" @close="closeModal('addDestination')"></AddDestinationModal>
+      <UpdateDeleteDestinationModal ref="updateDeleteDestinationModal" v-if="showModal.updateDeleteDestination" @close="closeModal('updateDeleteDestination')"></UpdateDeleteDestinationModal>
     </div>
   </div>
 </template>
@@ -20,10 +25,14 @@
 <script>
 import axios from 'axios'
 import AddTrainModal from '@/components/AddTrainModal.vue'
+import AddDestinationModal from '@/components/AddDestinationModal.vue'
+import UpdateDeleteDestinationModal from './UpdateDeleteDestinationModal.vue'
 
 export default {
   components: {
-    AddTrainModal
+    AddTrainModal,
+    AddDestinationModal,
+    UpdateDeleteDestinationModal
   },
   data () {
     return {
@@ -56,7 +65,11 @@ export default {
       trains: [],
       destinationFilter: '',
       departureTimeFilter: '',
-      showModal: false
+      showModal: {
+        addTrain: false,
+        addDestination: false,
+        updateDeleteDestination: false
+      }
     }
   },
   computed: {
@@ -91,11 +104,16 @@ export default {
           console.error('Une erreur s\'est produite lors de la suppression du train : ', error)
         })
     },
-    openAddModal () {
-      this.showModal = true
+    openModal (modalName) {
+      for (const key in this.showModal) {
+        if (key !== modalName) {
+          this.showModal[key] = false
+        }
+      }
+      this.showModal[modalName] = true
     },
-    closeAddModal () {
-      this.showModal = false
+    closeModal (modalName) {
+      this.showModal[modalName] = false
     },
     trainAddedSuccessfully () {
       this.fetchTrains()

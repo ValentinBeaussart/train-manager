@@ -22,12 +22,12 @@ module Api
         render json: trains
       end
 
-      # POST /trains
-      def create # rubocop:disable Metrics/MethodLength
-        available_platform = available_platform(train_params[:destination_id])
+      def create # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+        available_platform = available_platform(train_params[:departure_time], train_params[:destination_id])
 
         if available_platform.nil?
-          render json: { error: 'Tous les quais sont occupés' }, status: :unprocessable_entity
+          render json: { error: 'Il faut respecter un minimum de 10 minutes entre deux utilisations d’un même quai' },
+                 status: :unprocessable_entity
           return
         end
 
@@ -58,43 +58,30 @@ module Api
 
       private
 
-      def block_station_platform(station_platform)
-        Rails.cache.write("blocked_station_platform_#{station_platform}", true, expires_in: 1.minutes)
-      end
-
-      def reassign_platform(destination_category)
-        compatible_trains_without_platform = Train.where(station_platform: '').all
-        compatible_trains_without_platform.each do |train|
-          destination_category = train.destination.category
-          available_platform = available_platform(destination_category)
-
-          if available_platform.present?
-            train.update(station_platform: available_platform)
-            break
-          end
-        end
-      end
-
       def train_params
         params.require(:train).permit(:station_platform, :arrival_time, :departure_time, :destination_id)
       end
 
-      def assign_platform(destination_category)
-        station_platform = available_platform(destination_category)
-        @train.station_platform = station_platform if station_platform.present?
-        @train.save
-      end
-
-      def available_platform(destination_id)
+      def available_platform(departure_time, destination_id) # rubocop:disable Metrics/MethodLength
         destination = Destination.find_by(id: destination_id)
         return nil if destination.nil?
 
         destination_category = destination.category
-        if destination_category == 'TER'
-          %w[A B C D E].find { |platform| Train.where(station_platform: platform).empty? }
-        else
-          %w[D E].find { |platform| Train.where(station_platform: platform).empty? }
+
+        available_platforms = if destination_category == 'TER'
+                                %w[A B C D E]
+                              else
+                                %w[D E]
+                              end
+
+        available_platforms.shuffle.each do |platform|
+          conflicting_train = Train.find_by(station_platform: platform)
+          next if conflicting_train && (conflicting_train.arrival_time + 10.minutes) > departure_time
+
+          return platform
         end
+
+        nil
       end
     end
   end

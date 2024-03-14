@@ -7,16 +7,9 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-Destination.create!([name: 'Mionnay', station_code: 'A', category: 'TER'])
-Destination.create!([name: 'Lyon', station_code: 'B', category: 'TER'])
-Destination.create!([name: 'Paris', station_code: 'C', category: 'TGV'])
-Destination.create!([name: 'Marseille', station_code: 'D', category: 'TGV'])
-Destination.create!([name: 'Londres', station_code: 'E', category: 'TER'])
-Destination.create!([name: 'Rome', station_code: 'F', category: 'TER'])
-
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52', destination_id: 1])
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52' , destination_id: 2])
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52' , destination_id: 3])
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52' , destination_id: 4])
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52' , destination_id: 5])
-Train.create!([station_platform: '', arrival_time: '2024-03-11 23:25:52', departure_time: '2024-03-11 23:25:52' , destination_id: 6])
+Destination.create!([name: 'Vienne', station_code: '1', category: 'TER'])
+Destination.create!([name: 'Bourg-en-Bresse', station_code: '2', category: 'TER'])
+Destination.create!([name: 'Villars-les-Dombes', station_code: '3', category: 'TER'])
+Destination.create!([name: 'Marseille', station_code: '4', category: 'TGV'])
+Destination.create!([name: 'Londres', station_code: '5', category: 'TGV'])
+Destination.create!([name: 'Rome', station_code: '6', category: 'TGV'])

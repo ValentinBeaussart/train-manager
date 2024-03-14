@@ -11,7 +11,7 @@ module Api
         @destination = Destination.new(destination_params)
 
         if @destination.save
-          render json: @destination, status: :created, location: @destination
+          render json: @destination, status: :created
         else
           render json: @destination.errors, status: :unprocessable_entity
         end
@@ -19,6 +19,7 @@ module Api
 
       # PATCH/PUT /destinations/1
       def update
+        @destination = Destination.find(params[:id])
         if @destination.update(destination_params)
           render json: @destination
         else
@@ -26,9 +27,21 @@ module Api
         end
       end
 
-      # DELETE /destinations/1
+      # DELETE /trains
       def destroy
-        @destination.destroy!
+        @destination = Destination.find_by(id: params[:id])
+
+        if @destination.destroy
+          head :no_content
+        else
+          render json: @destination.errors, status: :unprocessable_entity
+        end
+      end
+
+      private
+
+      def destination_params
+        params.require(:destination).permit(:station_code, :category, :name)
       end
     end
   end
