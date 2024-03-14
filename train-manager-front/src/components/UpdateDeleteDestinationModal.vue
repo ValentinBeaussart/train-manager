@@ -129,7 +129,8 @@ export default {
       this.selected = items
     },
     showMsgBoxTwo (id) {
-      this.$bvModal.msgBoxConfirm(`Êtes-vous sûr de vouloir supprimer la destination ${this.destination_name} qui a le code de gare ${this.station_code} et qui accepte les trains de category ${this.category}`, {
+      this.destination = this.destinations.find(destination => destination.id === id)
+      this.$bvModal.msgBoxConfirm(`Êtes-vous sûr de vouloir supprimer la destination ${this.destination.name} qui a le code de gare ${this.destination.station_code} et qui accepte les trains de catégorie ${this.destination.category}`, {
         title: 'Valider votre saisie',
         size: 'm',
         buttonSize: 'm',
