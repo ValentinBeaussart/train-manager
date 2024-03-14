@@ -34,4 +34,9 @@ h1 {
 .navbar-toggler {
   margin-right: 50px;
 }
+
+.nav-link {
+  color: #C75C5C;
+  font-size: 1rem;
+}
 </style>

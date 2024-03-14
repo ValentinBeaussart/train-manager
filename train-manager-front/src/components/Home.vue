@@ -1,14 +1,19 @@
 <template>
-  <div class="train-table-container">
-    <b-table striped hover :items="trains" :fields="fields">
-      <template v-slot:cell(delete)="data">
-        <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"><b-icon
-            icon="trash"></b-icon></b-button>
-      </template>
-    </b-table>
-    <b-button variant="secondary" class="add-train-btn" v-b-modal.modal-prevent-closing @click="openAddModal">Ajouter un train</b-button>
-    <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeAddModal"
-      @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
+  <div>
+    <h1  class="title">Prochain départ</h1>
+    <div class="train-table-container">
+      <div class="filters">
+        <b-form-input class="search-input" v-model="destinationFilter" placeholder="Filtrer par destination"></b-form-input>
+        <b-form-input class="search-input mt-2" v-model="departureTimeFilter" placeholder="Filtrer par heure de départ"></b-form-input>
+      </div>
+      <b-table class="train-table" striped hover :items="filteredTrains" :fields="fields">
+        <template v-slot:cell(delete)="data">
+          <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"><b-icon icon="trash"></b-icon></b-button>
+        </template>
+      </b-table>
+      <b-button variant="secondary" class="add-train-btn" v-b-modal.modal-prevent-closing @click="openAddModal">Ajouter un train</b-button>
+      <AddTrainModal ref="addTrainModal" v-if="showModal" @close="closeAddModal" @trainAddedSuccessfully="trainAddedSuccessfully"></AddTrainModal>
+    </div>
   </div>
 </template>
 
@@ -49,7 +54,19 @@ export default {
         }
       ],
       trains: [],
+      destinationFilter: '',
+      departureTimeFilter: '',
       showModal: false
+    }
+  },
+  computed: {
+    filteredTrains () {
+      return this.trains.filter(train => {
+        return (
+          train.destination_name.toLowerCase().includes(this.destinationFilter.toLowerCase()) &&
+          train.departure_time.toLowerCase().includes(this.departureTimeFilter.toLowerCase())
+        )
+      })
     }
   },
   created () {
@@ -60,7 +77,6 @@ export default {
       axios.get('http://localhost:3000/api/v1/trains')
         .then(response => {
           this.trains = response.data
-          console.log(this.items)
         })
         .catch(error => {
           console.error('Une erreur s\'est produite lors de la récupération des trains : ', error)
@@ -86,7 +102,7 @@ export default {
     },
     showMsgBoxTwo (id) {
       this.$bvModal.msgBoxConfirm(`Êtes-vous sûr de vouloir supprimer le train numéro : ${id} ?`, {
-        title: 'Confirmer la supression',
+        title: 'Confirmer la suppression',
         size: 'm',
         buttonSize: 'm',
         okVariant: 'danger',
@@ -110,12 +126,25 @@ export default {
 </script>
 
 <style scoped>
+.search-input {
+  width: 30%;
+  margin-left: 50px;
+}
+
 .train-table-container {
+  margin-top: 50px;
+}
+
+.title {
   margin-top: 100px;
 }
 
 .delete-btn {
   background-color: #C75C5C;
   border-color: #C75C5C;
+}
+
+.filters {
+  margin-bottom: 20px;
 }
 </style>
