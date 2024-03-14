@@ -1,5 +1,5 @@
 <template>
-  <div class="table-container">
+  <div class="train-table-container">
     <b-table striped hover :items="trains" :fields="fields">
       <template v-slot:cell(delete)="data">
         <b-button class="delete-btn" @click="showMsgBoxTwo(data.item.id)"> <b-icon
@@ -15,12 +15,10 @@
 <script>
 import axios from 'axios'
 import AddTrainModal from '@/components/AddTrainModal.vue'
-import DeleteTrainModal from '@/components/DeleteTrainModal.vue'
 
 export default {
   components: {
-    AddTrainModal,
-    DeleteTrainModal
+    AddTrainModal
   },
   data () {
     return {
@@ -112,17 +110,12 @@ export default {
 </script>
 
 <style scoped>
-.table-container {
+.train-table-container {
   margin-top: 100px;
 }
 
 .delete-btn {
   background-color: #C75C5C;
   border-color: #C75C5C;
-}
-
-.add-train-btn {
-  background-color: #4e5d72;
-  border-color: #4e5d72;
 }
 </style>
