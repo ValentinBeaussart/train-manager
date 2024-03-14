@@ -1,7 +1,10 @@
 <template>
   <div>
-    <b-modal id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
+    <b-modal hide-no-close-on-backdrop-button hide-close-button id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
       @ok="handleOk">
+      <template v-slot:modal-header>
+    <h5 class="modal-title">Ajouter un train</h5>
+      </template>
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group label="Destination" label-for="destination-input" invalid-feedback="Champ obligatoire"
           :state="destinationNameState">
@@ -29,7 +32,7 @@ export default {
     return {
       options: [],
       destination_id: null,
-      destination_name: '',
+      destination_name: null,
       arrival_time: null,
       departure_time: null,
       station_platform: '',
@@ -104,7 +107,7 @@ export default {
       this.departureTimeState = this.checkValidity(this.departure_time)
     },
     resetModal () {
-      this.destination_name = ''
+      this.destination_name = null
       this.destinationNameState = null
       this.arrival_time = null
       this.arrivalTimeState = null

@@ -24,16 +24,19 @@ module Api
 
       # POST /trains
       def create # rubocop:disable Metrics/MethodLength
-        @train = Train.new(train_params)
+        available_platform = available_platform(train_params[:destination_id])
+
+        if available_platform.nil?
+          render json: { error: 'Tous les quais sont occupés' }, status: :unprocessable_entity
+          return
+        end
+
+        @train = Train.new(train_params.merge(station_platform: available_platform))
         if @train.departure_time >= @train.arrival_time
           render json: { error: "L'heure de départ doit être postérieure à l'heure d'arrivée" },
                  status: :unprocessable_entity
           return
         end
-
-        destination = Destination.find_by(id: train_params[:destination_id])
-        destination_category = destination.category
-        assign_platform(destination_category)
 
         if @train.save
           render json: @train, status: :created
@@ -42,14 +45,9 @@ module Api
         end
       end
 
-      # DELETE /destinations/1
-      def destroy # rubocop:disable Metrics/MethodLength
+      # DELETE /trains
+      def destroy
         @train = Train.find_by(id: params[:id])
-        @train_platform = @train.station_platform
-        destination = Destination.find(@train.destination_id)
-        destination_category = destination.category
-        @train.destroy
-        reassign_platform(destination_category) if @train_platform.present?
 
         if @train.destroy
           head :no_content
@@ -59,6 +57,10 @@ module Api
       end
 
       private
+
+      def block_station_platform(station_platform)
+        Rails.cache.write("blocked_station_platform_#{station_platform}", true, expires_in: 1.minutes)
+      end
 
       def reassign_platform(destination_category)
         compatible_trains_without_platform = Train.where(station_platform: '').all
@@ -83,7 +85,11 @@ module Api
         @train.save
       end
 
-      def available_platform(destination_category)
+      def available_platform(destination_id)
+        destination = Destination.find_by(id: destination_id)
+        return nil if destination.nil?
+
+        destination_category = destination.category
         if destination_category == 'TER'
           %w[A B C D E].find { |platform| Train.where(station_platform: platform).empty? }
         else
