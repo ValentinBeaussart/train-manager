@@ -3,8 +3,11 @@
 SET-UP :
 
 Ruby ==> 3.1.2
+
 Rails ==> 7.1.3.2
+
 SQLite
+
 Vue.js ==> @vue/cli 5.0.8 (Vue 2)
 
 ## SET-UP MACOS :
