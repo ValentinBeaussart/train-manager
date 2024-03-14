@@ -615,6 +615,16 @@ yarn -v
 yarn global add @vue/cli
 ```
 
+## INSTALLATION BOOTSTRAP
+```bash
+npm install bootstrap bootstrap-vue
+```
+OU
+
+```bash
+npm install --save bootstrap
+```
+
 ## --------------------
 
 Une fois le projet cloné, il faut faire cet enchaînement de commande en console dans Rails :
