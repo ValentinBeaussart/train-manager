@@ -126,9 +126,11 @@ sqlite3 -version
 
 :heavy_check_mark: Si tu vois une version s'afficher, c'est tout bon :+1:
 
-## RAILS
+## Rails
 
+```bash
 gem install rails
+```
 
 ## Node.js
 
@@ -333,7 +335,9 @@ sqlite3 -version
 
 ## Rails
 
+```bash
 gem install rails
+```
 
 ## Node.js
 
@@ -426,7 +430,6 @@ git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 exec zsh
 ```
-
 
 ## Ruby
 
@@ -536,9 +539,11 @@ sqlite3 -version
 
 :x: If not, **demande au prof**
 
-## RAILS
+## Rails
 
+```bash
 gem install rails
+```
 
 ## Node.js
 
@@ -600,3 +605,32 @@ yarn -v
 :heavy_check_mark: Si tu vois apparaître une version, c’est bon :+1:
 
 :x: Sinon, **demande au prof**
+
+
+## INSTALLATION VUE CLI
+```bash
+yarn global add @vue/cli
+```
+
+## --------------------
+
+Une fois le projet cloné, il faut faire cet enchaînement de commande en console dans Rails :
+```bash
+bundle install
+rails s
+```
+Puis ouvrir un nouvel onglet :
+
+```bash
+rails db:create
+rails db:migrate
+rails db:seed
+```
+
+Pour le front :
+```bash
+yarn dev
+```
+
+url front : http://localhost:8080/#/
+url back : http://localhost:3000/
