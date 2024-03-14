@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-modal hide-no-close-on-backdrop-button hide-close-button id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
+    <b-modal id="modal-prevent-closing" ref="modal" title="Ajouter un train" @show="resetModal" @hidden="resetModal"
       @ok="handleOk">
       <template v-slot:modal-header>
-    <h5 class="modal-title">Ajouter un train</h5>
+        <h5 class="modal-title">Ajouter un train</h5>
       </template>
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group label="Destination" label-for="destination-input" invalid-feedback="Champ obligatoire"
@@ -12,11 +12,13 @@
         </b-form-group>
         <b-form-group label="Heure de départ" label-for="departure_time-input" invalid-feedback="Champ obligatoire">
           <b-form-timepicker :state="departureTimeState" v-model="departure_time" :locale="locale"
-            placeholder="Sélectionnez l'heure de départ" required @input="checkDepartureValidity" @context="onContext" v-bind="labels[locale] || {}"></b-form-timepicker>
+            placeholder="Sélectionnez l'heure de départ" required @input="checkDepartureValidity" @context="onContext"
+            v-bind="labels[locale] || {}"></b-form-timepicker>
         </b-form-group>
         <b-form-group label="Heure d'arrivée" label-for="arrival_time-input" invalid-feedback="Champ obligatoire">
           <b-form-timepicker :state="arrivalTimeState" v-model="arrival_time" :locale="locale"
-            placeholder="Sélectionnez l'heure d'arrivée" required @input="checkArrivalValidity" @context="onContext" v-bind="labels[locale] || {}"></b-form-timepicker>
+            placeholder="Sélectionnez l'heure d'arrivée" required @input="checkArrivalValidity" @context="onContext"
+            v-bind="labels[locale] || {}"></b-form-timepicker>
         </b-form-group>
         <b-alert v-if="createTrainsError !== null" class="mt-4" show variant="danger">{{ createTrainsError }}</b-alert>
       </form>
